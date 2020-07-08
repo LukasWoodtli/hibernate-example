@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url 'http://repository.jboss.org/nexus/content/groups/public' }
+}
+
+configurations {
+    codegen
+}
+
+dependencies {
+    codegen group: 'org.hibernate', name: 'hibernate-tools', version: '4.3.5.Final'
+    codegen group: 'org.hibernate', name: 'hibernate-core', version: '4.3.9.Final'
+    codegen group: 'org.hibernate', name: 'hibernate-entitymanager', version: '4.3.9.Final'
+    codegen group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.5'
+    codegen group: 'log4j', name: 'log4j', version: '1.2.17'
+    codegen group: 'com.oracle.database.jdbc', name: 'ojdbc10', version: '19.7.0.0'
+}
+
+project.ext {
+    hibernateDestDir = file("$buildDir/generated")
+}
+
+ant.lifecycleLogLevel = "VERBOSE"
+task codegen {
+    outputs.dir hibernateDestDir
+
+    doLast {
+        hibernateDestDir.exists() || hibernateDestDir.mkdirs()
+        ant {
+            taskdef(name: "hibernatetool",
+                    classname: "org.hibernate.tool.ant.HibernateToolTask",
+                    classpath: configurations.codegen.asPath + ":$projectDir/src/main/resources")
+            hibernatetool(destdir: hibernateDestDir) {
+                classpath {
+                    pathelement(path: configurations.codegen.asPath)
+                }
+                configuration {
+                    fileset(dir: "$projectDir/src/main/resources") {
+                        include { name = "**/*.hbm.xml" }
+                    }
+                }
+                hbm2dao()
+                hbm2java(
+                        jdk5: true,
+                        ejb3: false
+                )
+            }
+        }
+    }
+}

@@ -7,7 +7,7 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    maven { url 'http://repository.jboss.org/nexus/content/groups/public' }
+    maven { url 'https://repository.jboss.org/nexus/content/groups/public' }
 }
 
 configurations {
@@ -15,12 +15,13 @@ configurations {
 }
 
 dependencies {
-    codegen group: 'org.hibernate', name: 'hibernate-tools', version: '4.3.5.Final'
+    codegen group: 'org.hibernate', name: 'hibernate-tools', version: '5.4.18.Final'
     codegen group: 'org.hibernate', name: 'hibernate-core', version: '4.3.9.Final'
     codegen group: 'org.hibernate', name: 'hibernate-entitymanager', version: '4.3.9.Final'
     codegen group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.5'
     codegen group: 'log4j', name: 'log4j', version: '1.2.17'
     codegen group: 'com.oracle.database.jdbc', name: 'ojdbc10', version: '19.7.0.0'
+    codegen group: 'com.h2database', name: 'h2', version: '1.4.193'
 }
 
 project.ext {
@@ -42,15 +43,14 @@ task codegen {
                     pathelement(path: configurations.codegen.asPath)
                 }
                 configuration {
-                    fileset(dir: "$projectDir/src/main/resources") {
-                        include { name = "**/*.hbm.xml" }
+                    propertyfile="$projectDir/src/main/resources/hibernate.properties"
+                        fileset(dir: "$projectDir/src") {
+                            include { name = "**/*.hbm.xml" }
                     }
                 }
-                hbm2dao()
-                hbm2java(
-                        jdk5: true,
-                        ejb3: false
-                )
+                hbm2ddl()
+                hbm2dao(destdir: "$buildDir/generated")
+                hbm2java(destdir: "$buildDir/generated")
             }
         }
     }

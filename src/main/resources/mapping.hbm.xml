@@ -1,12 +1,12 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-        "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
 <class name="Account" table="ACCOUNT">
-    <id name="accountId" type="byte[]" column="ACCOUNT_ID">
+    <id name="accountId">
+        <column name="ACCOUNT_ID" />
         <generator class="native" />
     </id>
-    <property name="description" column="DESC" />
+    <property name="description">
+              <column name="DESC" />
+    </property>
 </class>
 </hibernate-mapping>

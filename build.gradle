@@ -15,9 +15,8 @@ configurations {
 }
 
 dependencies {
-    codegen group: 'org.hibernate', name: 'hibernate-tools', version: '5.4.18.Final'
-    codegen group: 'org.hibernate', name: 'hibernate-core', version: '4.3.9.Final'
-    codegen group: 'org.hibernate', name: 'hibernate-entitymanager', version: '4.3.9.Final'
+    codegen group: 'org.hibernate', name: 'hibernate-core', version: '5.4.19.Final'
+    codegen group: 'org.hibernate', name: 'hibernate-tools', version: '5.4.19.Final'
     codegen group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.5'
     codegen group: 'log4j', name: 'log4j', version: '1.2.17'
     codegen group: 'com.oracle.database.jdbc', name: 'ojdbc10', version: '19.7.0.0'
@@ -35,6 +34,7 @@ task codegen {
     doLast {
         hibernateDestDir.exists() || hibernateDestDir.mkdirs()
         ant {
+            echo("$buildDir/generated")
             taskdef(name: "hibernatetool",
                     classname: "org.hibernate.tool.ant.HibernateToolTask",
                     classpath: configurations.codegen.asPath + ":$projectDir/src/main/resources")
